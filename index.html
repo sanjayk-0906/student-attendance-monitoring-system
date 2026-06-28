@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduTrack | Smart Attendance System</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body
+    style="display: flex; align-items: center; justify-content: center; background: radial-gradient(circle at top right, #1e1b4b, #0f172a);">
+
+    <div class="glass animate-fade-in"
+        style="max-width: 900px; padding: 4rem; text-align: center; border-radius: 40px; margin: 2rem;">
+        <div
+            style="background: var(--primary); width: 80px; height: 80px; border-radius: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto 2rem;">
+            <i data-lucide="wifi" style="color: white; width: 40px; height: 40px;"></i>
+        </div>
+
+        <h1
+            style="font-size: 3rem; margin-bottom: 1rem; background: linear-gradient(to right, #818cf8, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+            Automated Student Attendance Monitoring
+        </h1>
+        <p style="color: var(--text-muted); font-size: 1.25rem; max-width: 600px; margin: 0 auto 3rem;">
+            A network-based monitoring and analytics system using intelligent subnet validation and device binding.
+        </p>
+
+        <div class="card-grid" style="grid-template-columns: repeat(3, 1fr); max-width: 700px; margin: 0 auto;">
+            <a href="pages/login.html?role=admin" class="glass card" style="text-decoration: none; color: inherit;">
+                <i data-lucide="shield-check" style="color: var(--primary-light); margin-bottom: 1rem;"></i>
+                <h4>Admin</h4>
+            </a>
+            <a href="pages/login.html?role=teacher" class="glass card" style="text-decoration: none; color: inherit;">
+                <i data-lucide="users" style="color: var(--success); margin-bottom: 1rem;"></i>
+                <h4>Teacher</h4>
+            </a>
+            <a href="pages/login.html?role=student" class="glass card" style="text-decoration: none; color: inherit;">
+                <i data-lucide="mortar-board" style="color: var(--warning); margin-bottom: 1rem;"></i>
+                <h4>Student</h4>
+            </a>
+        </div>
+
+        <p style="margin-top: 4rem; font-size: 0.9rem; color: var(--text-muted);">
+            Project Presentation • 2026 CS Dept
+        </p>
+    </div>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+
+</html>

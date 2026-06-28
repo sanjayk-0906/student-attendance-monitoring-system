@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Dashboard | EduTrack</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <div class="layout">
+        <aside class="sidebar glass">
+            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 3rem;">
+                <div style="background: var(--primary); padding: 0.5rem; border-radius: 10px;">
+                    <i data-lucide="wifi" style="color: white; width: 20px; height: 20px;"></i>
+                </div>
+                <h2>EduTrack</h2>
+            </div>
+            <nav style="flex: 1;">
+                <ul style="list-style: none;">
+                    <li><a href="#" class="btn btn-primary" style="justify-content: flex-start;"><i
+                                data-lucide="calendar"></i> Dashboard</a></li>
+                    <li><a href="timetable.html" class="btn"
+                            style="justify-content: flex-start; color: var(--text-muted);"><i
+                                data-lucide="calendar"></i> Timetable</a></li>
+                    <li><a href="history.html" class="btn"
+                            style="justify-content: flex-start; color: var(--text-muted);"><i
+                                data-lucide="clipboard-list"></i> History</a></li>
+                    <li><a href="#" class="btn" style="justify-content: flex-start; color: var(--text-muted);"><i
+                                data-lucide="alert-triangle"></i> Defaulters</a></li>
+                </ul>
+            </nav>
+            <button onclick="clearUser()" class="btn"
+                style="justify-content: flex-start; color: var(--danger); background: transparent;">
+                <i data-lucide="log-out"></i> Logout
+            </button>
+        </aside>
+
+        <main class="main-content">
+            <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2.5rem;">
+                <div>
+                    <h1>Faculty Dashboard</h1>
+                    <p style="color: var(--text-muted);">Managing: Computer Networks (CS401)</p>
+                </div>
+                <div style="display: flex; gap: 1rem;">
+                    <button id="downloadCsv" class="btn glass"
+                        style="border-color: var(--success); color: var(--success);">
+                        <i data-lucide="download"></i> Export CSV
+                    </button>
+                </div>
+            </header>
+
+            <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 1.5rem;">
+                <!-- Today's Classes -->
+                <div class="glass card">
+                    <h3>Today's Classes</h3>
+                    <div style="margin-top: 1rem;">
+                        <div class="glass"
+                            style="padding: 1rem; border-left: 4px solid var(--primary); margin-bottom: 1rem;">
+                            <div style="display: flex; justify-content: space-between;">
+                                <strong>CS401 - CN</strong>
+                                <span style="font-size: 0.8rem; color: var(--text-muted);">09:00 - 10:30</span>
+                            </div>
+                            <p style="font-size: 0.85rem; margin-top: 0.5rem;">Lab 1 - 2nd Floor</p>
+                            <span class="glass"
+                                style="padding: 2px 8px; border-radius: 10px; font-size: 0.7rem; background: rgba(16, 185, 129, 0.1); color: var(--success);">COMPLETED</span>
+                        </div>
+                        <div class="glass" style="padding: 1rem; border-left: 4px solid var(--text-muted);">
+                            <div style="display: flex; justify-content: space-between;">
+                                <strong>CS403 - DBMS</strong>
+                                <span style="font-size: 0.8rem; color: var(--text-muted);">02:00 - 03:30</span>
+                            </div>
+                            <p style="font-size: 0.85rem; margin-top: 0.5rem;">Room 102</p>
+                            <span class="glass"
+                                style="padding: 2px 8px; border-radius: 10px; font-size: 0.7rem;">UPCOMING</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Attendance Table -->
+                <div class="glass card">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <h3>Recent Attendance</h3>
+                        <input type="text" placeholder="Search Roll No..." style="width: 200px; margin-bottom: 0;">
+                    </div>
+                    <div style="margin-top: 1.5rem; overflow-x: auto;">
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <thead>
+                                <tr style="text-align: left; color: var(--text-muted); font-size: 0.9rem;">
+                                    <th style="padding-bottom: 1rem;">Student</th>
+                                    <th style="padding-bottom: 1rem;">Roll No</th>
+                                    <th style="padding-bottom: 1rem;">Method</th>
+                                    <th style="padding-bottom: 1rem;">Status</th>
+                                    <th style="padding-bottom: 1rem;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="attendanceList">
+                                <!-- Data will be loaded via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass card" style="margin-top: 1.5rem;">
+                <h3>Defaulter Analysis (< 75%)</h3>
+                        <div style="margin-top: 1rem;">
+                            <canvas id="defaulterChart" style="max-height: 250px;"></canvas>
+                        </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/mock-data.js"></script>
+    <script>
+        lucide.createIcons();
+
+        // Load Attendance Table
+        const list = document.getElementById('attendanceList');
+        MOCK_DATA.students.forEach(s => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td style="padding: 0.75rem 0;">${s.name}</td>
+                <td>${s.roll}</td>
+                <td><span style="font-size: 0.75rem; background: rgba(79, 70, 229, 0.1); padding: 2px 8px; border-radius: 5px;">WiFi</span></td>
+                <td><span style="color: ${s.id === 2 ? 'var(--danger)' : 'var(--success)'}; font-weight: 700;">${s.id === 2 ? 'ABSENT' : 'PRESENT'}</span></td>
+                <td><button class="btn glass" style="padding: 4px 10px; font-size: 0.7rem;">Override</button></td>
+            `;
+            list.appendChild(tr);
+        });
+
+        // Defaulter Chart
+        const dCtx = document.getElementById('defaulterChart').getContext('2d');
+        new Chart(dCtx, {
+            type: 'bar',
+            data: {
+                labels: ['CS001', 'CS002', 'CS003', 'CS004', 'CS005'],
+                datasets: [{
+                    label: 'Attendance %',
+                    data: [82, 68, 91, 72, 85],
+                    backgroundColor: (ctx) => ctx.raw < 75 ? '#ef4444' : '#4f46e5',
+                    borderRadius: 8
+                }]
+            },
+            options: {
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { beginAtZero: true, max: 100, grid: { color: 'rgba(255,255,255,0.05)' } },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+
+        // Simulate CSV
+        document.getElementById('downloadCsv').addEventListener('click', () => {
+            alert('Simulating CSV generation for CN Attendence_Report_Feb.csv...');
+        });
+    </script>
+</body>
+
+</html>

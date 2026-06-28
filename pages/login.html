@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | EduTrack</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body style="display: flex; align-items: center; justify-content: center; background: var(--bg-dark);">
+
+    <div class="glass animate-fade-in" style="width: 100%; max-width: 450px; padding: 3rem; border-radius: 30px;">
+        <div id="roleHeader" style="text-align: center; margin-bottom: 2rem;">
+            <h2 id="loginTitle">Login</h2>
+            <p id="roleBadge"
+                style="display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; margin-top: 0.5rem;">
+            </p>
+        </div>
+
+        <form id="loginForm">
+            <label style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; color: var(--text-muted);">Email
+                Address</label>
+            <input type="email" id="email" placeholder="name@college.edu" required>
+
+            <label
+                style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; color: var(--text-muted);">Password</label>
+            <input type="password" id="password" placeholder="••••••••" required>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">
+                Sign In
+            </button>
+        </form>
+
+        <p style="text-align: center; font-size: 0.85rem; margin-top: 2rem; color: var(--text-muted);">
+            Forgot Password? <a href="#" style="color: var(--primary-light);">Contact Admin</a>
+        </p>
+    </div>
+
+    <script src="../js/mock-data.js"></script>
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const role = params.get('role') || 'student';
+        const roleBadge = document.getElementById('roleBadge');
+
+        // Dynamic Role UI
+        if (role === 'admin') {
+            roleBadge.innerText = 'Administrator Access';
+            roleBadge.style.background = 'rgba(79, 70, 229, 0.2)';
+            roleBadge.style.color = '#818cf8';
+        } else if (role === 'teacher') {
+            roleBadge.innerText = 'Faculty Portal';
+            roleBadge.style.background = 'rgba(16, 185, 129, 0.2)';
+            roleBadge.style.color = '#34d399';
+        } else {
+            roleBadge.innerText = 'Student Portal';
+            roleBadge.style.background = 'rgba(245, 158, 11, 0.2)';
+            roleBadge.style.color = '#fbbf24';
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+
+            // Simulation of Backend Auth
+            saveUser({ name: email.split('@')[0].toUpperCase(), role: role, email: email });
+
+            // Redirect based on role
+            window.location.href = `${role}.html`;
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activity History | EduTrack</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body>
+    <div class="layout">
+        <aside class="sidebar glass">
+            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 3rem;">
+                <div style="background: var(--primary); padding: 0.5rem; border-radius: 10px;">
+                    <i data-lucide="wifi" style="color: white; width: 20px; height: 20px;"></i>
+                </div>
+                <h2>EduTrack</h2>
+            </div>
+            <nav style="flex: 1;">
+                <ul style="list-style: none;">
+                    <li style="margin-bottom: 0.5rem;"><a id="dashLink" href="#" class="btn"
+                            style="justify-content: flex-start; color: var(--text-muted);"><i
+                                data-lucide="layout-dashboard"></i> Dashboard</a></li>
+                    <li style="margin-bottom: 0.5rem;"><a href="timetable.html" class="btn"
+                            style="justify-content: flex-start; color: var(--text-muted);"><i
+                                data-lucide="calendar"></i> Timetable</a></li>
+                    <li style="margin-bottom: 0.5rem;"><a href="history.html" class="btn btn-primary"
+                            style="justify-content: flex-start;"><i data-lucide="history"></i> History</a></li>
+                </ul>
+            </nav>
+            <button onclick="clearUser()" class="btn"
+                style="justify-content: flex-start; color: var(--danger); background: transparent;">
+                <i data-lucide="log-out"></i> Logout
+            </button>
+        </aside>
+
+        <main class="main-content">
+            <header style="margin-bottom: 2.5rem;">
+                <h1>Activity History</h1>
+                <p style="color: var(--text-muted);">Showing logs for <span id="userName">User</span></p>
+            </header>
+
+            <div class="glass card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <h3>Recent Attendance Logs</h3>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <span class="glass"
+                            style="padding: 4px 12px; font-size: 0.8rem; background: rgba(16, 185, 129, 0.1); color: var(--success);">WiFi:
+                            12</span>
+                        <span class="glass"
+                            style="padding: 4px 12px; font-size: 0.8rem; background: rgba(245, 158, 11, 0.1); color: var(--warning);">Manual:
+                            2</span>
+                    </div>
+                </div>
+
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr
+                                style="text-align: left; color: var(--text-muted); border-bottom: 1px solid var(--glass-border);">
+                                <th style="padding: 1rem;">Date</th>
+                                <th style="padding: 1rem;">Subject</th>
+                                <th style="padding: 1rem;">IP Address</th>
+                                <th style="padding: 1rem;">Method</th>
+                                <th style="padding: 1rem;">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historyBody">
+                            <!-- Data loaded via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/mock-data.js"></script>
+    <script>
+        lucide.createIcons();
+        const user = State.currentUser;
+        if (user) {
+            document.getElementById('userName').innerText = user.name;
+            document.getElementById('dashLink').href = `${user.role}.html`;
+
+            const historyBody = document.getElementById('historyBody');
+            const subjects = ["Computer Networks", "Operating Systems", "DBMS"];
+            const dates = ["2026-02-24", "2026-02-23", "2026-02-22", "2026-02-21", "2026-02-20"];
+
+            dates.forEach((date, i) => {
+                const tr = document.createElement('tr');
+                tr.style.borderBottom = "1px solid var(--glass-border)";
+                tr.innerHTML = `
+                    <td style="padding: 1rem;">${date}</td>
+                    <td style="padding: 1rem;">${subjects[i % 3]}</td>
+                    <td style="padding: 1rem; font-family: monospace;">${user.ip || '192.168.1.142'}</td>
+                    <td style="padding: 1rem;"><span class="glass" style="padding: 2px 8px; font-size: 0.75rem;">${i === 3 ? 'Manual' : 'WiFi'}</span></td>
+                    <td style="padding: 1rem;"><span style="color: var(--success); font-weight: 700;">PRESENT</span></td>
+                `;
+                historyBody.appendChild(tr);
+            });
+        }
+    </script>
+</body>
+
+</html>

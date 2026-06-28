@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | EduTrack</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <div class="layout">
+        <!-- Sidebar -->
+        <aside class="sidebar glass">
+            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 3rem;">
+                <div style="background: var(--primary); padding: 0.5rem; border-radius: 10px;">
+                    <i data-lucide="wifi" style="color: white; width: 20px; height: 20px;"></i>
+                </div>
+                <h2 style="font-size: 1.25rem;">EduTrack</h2>
+            </div>
+
+            <nav style="flex: 1;">
+                <ul style="list-style: none;">
+                    <li style="margin-bottom: 0.5rem;">
+                        <a href="#" class="btn btn-primary"
+                            style="justify-content: flex-start; background: rgba(79, 70, 229, 0.1); color: var(--primary-light);">
+                            <i data-lucide="layout-dashboard"></i> Overview
+                        </a>
+                    </li>
+                    <li style="margin-bottom: 0.5rem;">
+                        <a href="timetable.html" class="btn"
+                            style="justify-content: flex-start; color: var(--text-muted);">
+                            <i data-lucide="calendar"></i> Timetable
+                        </a>
+                    </li>
+                    <li style="margin-bottom: 0.5rem;">
+                        <a href="#" class="btn" style="justify-content: flex-start; color: var(--text-muted);">
+                            <i data-lucide="building"></i> Departments
+                        </a>
+                    </li>
+                    <li style="margin-bottom: 0.5rem;">
+                        <a href="history.html" class="btn"
+                            style="justify-content: flex-start; color: var(--text-muted);">
+                            <i data-lucide="history"></i> History
+                        </a>
+                    </li>
+                    <li style="margin-bottom: 0.5rem;">
+                        <a href="#" class="btn" style="justify-content: flex-start; color: var(--text-muted);">
+                            <i data-lucide="settings"></i> System
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
+            <button onclick="clearUser()" class="btn"
+                style="justify-content: flex-start; color: var(--danger); background: transparent;">
+                <i data-lucide="log-out"></i> Logout
+            </button>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3rem;">
+                <div>
+                    <h1>System Overview</h1>
+                    <p style="color: var(--text-muted);">Welcome back, Admin</p>
+                </div>
+                <div style="display: flex; gap: 1rem; align-items: center;">
+                    <span id="realClock"
+                        style="font-family: monospace; font-weight: 600; color: var(--primary-light);">00:00:00</span>
+                    <i data-lucide="bell" style="color: var(--text-muted); cursor: pointer;"></i>
+                </div>
+            </header>
+
+            <div class="card-grid">
+                <div class="glass card">
+                    <p style="color: var(--text-muted);">Total Students</p>
+                    <div class="stat-value">1,248</div>
+                    <p style="font-size: 0.8rem; color: var(--success); margin-top: 0.5rem;">+12% this month</p>
+                </div>
+                <div class="glass card">
+                    <p style="color: var(--text-muted);">Active Subjects</p>
+                    <div class="stat-value">42</div>
+                    <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.5rem;">Across 6 depts</p>
+                </div>
+                <div class="glass card">
+                    <p style="color: var(--text-muted);">Today's Attendance</p>
+                    <div class="stat-value" style="color: var(--success);">88.4%</div>
+                    <p style="font-size: 0.8rem; color: var(--success); margin-top: 0.5rem;">✔ Above average</p>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; margin-top: 2rem;">
+                <div class="glass card">
+                    <h3>Attendance Trends</h3>
+                    <canvas id="mainChart" style="height: 300px; width: 100%; margin-top: 1rem;"></canvas>
+                </div>
+                <div class="glass card">
+                    <h3>Quick Configuration</h3>
+                    <div style="margin-top: 1.5rem;">
+                        <label>Classroom Name</label>
+                        <input type="text" placeholder="e.g. Lab 1">
+                        <label>Subnet Range</label>
+                        <input type="text" placeholder="192.168.1.0/24">
+                        <button class="btn btn-primary" style="width: 100%;">Save Network Rule</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/mock-data.js"></script>
+    <script>
+        lucide.createIcons();
+
+        // Clock Update
+        setInterval(() => {
+            document.getElementById('realClock').innerText = new Date().toLocaleTimeString();
+        }, 1000);
+
+        // Chart.js - Attendance Trends
+        const ctx = document.getElementById('mainChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
+                datasets: [{
+                    label: 'Attendance %',
+                    data: [82, 85, 78, 91, 88],
+                    borderColor: '#4f46e5',
+                    backgroundColor: 'rgba(79, 70, 229, 0.1)',
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { grid: { color: 'rgba(255,255,255,0.05)' }, border: { display: false } },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

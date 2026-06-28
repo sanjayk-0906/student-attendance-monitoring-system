@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard | EduTrack</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <div class="layout">
+        <aside class="sidebar glass">
+            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 3rem;">
+                <div style="background: var(--primary); padding: 0.5rem; border-radius: 10px;">
+                    <i data-lucide="wifi" style="color: white; width: 20px; height: 20px;"></i>
+                </div>
+                <h2>EduTrack</h2>
+            </div>
+            <nav style="flex: 1;">
+                <ul style="list-style: none;">
+                    <li><a href="#" class="btn btn-primary" style="justify-content: flex-start;"><i
+                                data-lucide="home"></i> Dashboard</a></li>
+                    <li><a href="timetable.html" class="btn"
+                            style="justify-content: flex-start; color: var(--text-muted);"><i
+                                data-lucide="calendar"></i> Timetable</a></li>
+                    <li><a href="history.html" class="btn"
+                            style="justify-content: flex-start; color: var(--text-muted);"><i data-lucide="history"></i>
+                            History</a></li>
+                </ul>
+            </nav>
+            <button onclick="clearUser()" class="btn"
+                style="justify-content: flex-start; color: var(--danger); background: transparent;">
+                <i data-lucide="log-out"></i> Logout
+            </button>
+        </aside>
+
+        <main class="main-content">
+            <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2.5rem;">
+                <div>
+                    <h1>My Attendance</h1>
+                    <p style="color: var(--text-muted);">Welcome, <span id="studentName">Student</span></p>
+                </div>
+            </header>
+
+            <div id="lowAttendanceAlert" class="glass"
+                style="padding: 1rem; border-left: 4px solid var(--danger); background: rgba(239, 68, 68, 0.1); margin-bottom: 2rem; display: none;">
+                <p style="color: var(--danger); font-weight: 600;"><i data-lucide="alert-circle"
+                        style="vertical-align: middle;"></i> Attendance Alert: Your overall percentage is below 75%.</p>
+            </div>
+
+            <div class="card-grid">
+                <div class="glass card">
+                    <h3>Overall Attendance</h3>
+                    <div class="stat-value" id="totalPerc">0%</div>
+                    <div
+                        style="width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; margin-top: 1rem;">
+                        <div id="percProgress"
+                            style="height: 100%; background: var(--success); border-radius: 4px; transition: width 1s;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass card">
+                    <h3>Device Status</h3>
+                    <div style="margin-top: 1rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span style="color: var(--text-muted);">Device ID:</span>
+                            <span style="font-family: monospace;" id="deviceId">DEV-X88019</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span style="color: var(--text-muted);">Current IP:</span>
+                            <span style="font-family: monospace;" id="currentIp">192.168.1.142</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="color: var(--text-muted);">Subnet:</span>
+                            <span style="color: var(--success); font-weight: 600;">VALID</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 2rem;">
+                <!-- WiFi Validation Panel -->
+                <div class="glass card" style="border: 2px solid var(--primary);">
+                    <div style="display: flex; align-items: center; justify-content: space-between;">
+                        <h3>WiFi Attendance Check</h3>
+                        <i data-lucide="wifi" style="color: var(--primary);"></i>
+                    </div>
+
+                    <div id="validationSteps" style="margin-top: 2rem;">
+                        <div class="validate-step" style="display: flex; gap: 1rem; margin-bottom: 1rem; opacity: 0.5;">
+                            <i data-lucide="circle" id="step1-icon"></i>
+                            <span id="subnetVerifyText">Verifying Classroom Subnet...</span>
+                        </div>
+                        <div class="validate-step" style="display: flex; gap: 1rem; margin-bottom: 1rem; opacity: 0.5;">
+                            <i data-lucide="circle" id="step2-icon"></i>
+                            <span>Authenticating Device Binding...</span>
+                        </div>
+                        <div class="validate-step" style="display: flex; gap: 1rem; margin-bottom: 1rem; opacity: 0.5;">
+                            <i data-lucide="circle" id="step3-icon"></i>
+                            <span>Checking Timetable Sync...</span>
+                        </div>
+                    </div>
+
+                    <button id="simulateBtn" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">
+                        Perform Validation
+                    </button>
+                    <div id="successMsg"
+                        style="text-align: center; color: var(--success); font-weight: 700; margin-top: 1rem; display: none;">
+                        Attendance Marked Successfully!
+                    </div>
+                </div>
+
+                <div class="glass card">
+                    <h3>Subject Breakdown</h3>
+                    <canvas id="studentChart" style="height: 250px;"></canvas>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/mock-data.js"></script>
+    <script>
+        lucide.createIcons();
+
+        // Load Student Data (Dynamic based on login email)
+        const user = State.currentUser;
+        if (user) {
+            document.getElementById('studentName').innerText = user.name;
+            document.getElementById('deviceId').innerText = user.deviceId || 'DEV-X88019';
+            document.getElementById('currentIp').innerText = user.ip || '192.168.1.142';
+
+            const attendanceValue = user.att || 72;
+            document.getElementById('totalPerc').innerText = attendanceValue + '%';
+            document.getElementById('percProgress').style.width = attendanceValue + '%';
+            if (attendanceValue < 75) document.getElementById('lowAttendanceAlert').style.display = 'block';
+        }
+
+        // Student Analytics
+        const sCtx = document.getElementById('studentChart').getContext('2d');
+        new Chart(sCtx, {
+            type: 'polarArea',
+            data: {
+                labels: ['CN', 'OS', 'DBMS', 'AI', 'SE'],
+                datasets: [{
+                    data: [82, 68, 91, 75, 80],
+                    backgroundColor: ['rgba(79, 70, 229, 0.6)', 'rgba(239, 68, 68, 0.6)', 'rgba(16, 185, 129, 0.6)', 'rgba(245, 158, 11, 0.6)', 'rgba(129, 140, 248, 0.6)']
+                }]
+            },
+            options: {
+                plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8' } } },
+                scales: { r: { grid: { color: 'rgba(255,255,255,0.05)' }, border: { display: false } } }
+            }
+        });
+
+        // WiFi Animation Simulation
+        const simulateBtn = document.getElementById('simulateBtn');
+        simulateBtn.addEventListener('click', async () => {
+            simulateBtn.disabled = true;
+            simulateBtn.innerText = 'Validating...';
+
+            const steps = [
+                { id: 'step1-icon', text: `Subnet Verified: ${user ? user.ip.split('.').slice(0, 3).join('.') : '192.168.1'}.0/24` },
+                { id: 'step2-icon', text: 'Device Match Found' },
+                { id: 'step3-icon', text: 'CS401 Lecture Slot Detected' }
+            ];
+
+            for (let i = 0; i < steps.length; i++) {
+                await new Promise(r => setTimeout(r, 1200));
+                const icon = document.getElementById(steps[i].id);
+                icon.parentNode.style.opacity = '1';
+                if (i === 0) document.getElementById('subnetVerifyText').innerText = steps[i].text;
+                icon.innerHTML = '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline>';
+                icon.style.color = 'var(--success)';
+            }
+
+            await new Promise(r => setTimeout(r, 500));
+            document.getElementById('successMsg').style.display = 'block';
+            simulateBtn.innerText = 'Validation Complete';
+        });
+    </script>
+</body>
+
+</html>

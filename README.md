@@ -17,6 +17,9 @@ This is a **Frontend-Only** demonstration designed for academic project presenta
 - `/js/mock-data.js`: Centralized mock JSON database for users and logs.
 - `/css/style.css`: Unified design system.
 
+  <img width="786" height="453" alt="image" src="https://github.com/user-attachments/assets/20934fdd-d5dc-4009-b2fa-28ce47a1465a" />
+
+
 ## Presentation Flow
 1. **Landing**: Show the three entry roles.
 2. **Student Dashboard**: 
